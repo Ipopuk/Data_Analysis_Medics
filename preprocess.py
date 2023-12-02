@@ -1,6 +1,18 @@
 import pandas as pd
 
 
+def add_column(df):
+    df["аик+переливание_крови"] = df["аик"] * (df["объем_гемотрансфузии"].apply(lambda x: 1 if x > 0 else 0))
+
+
+def check_duplicates(df):
+    df.drop_duplicates()
+
+
+def drop_nan(df):
+    df.dropna()
+
+
 def fix_types(df):
     df["развитие_опп"] = df["развитие_опп"].apply(lambda x: 0 if x == "нет" else 1)
     df["хбп"] = df["хбп"].apply(lambda x: 0 if x == "Пациенты без ХБП" else 1 if x == "Стадия C1-C2" else 2)
@@ -12,7 +24,9 @@ def preprocess(df_name: str):
     df = pd.read_csv(df_name)
     df.columns = [x.lower().replace(" ", "_").replace(",", "") for x in df.columns]
     fix_types(df)
-    print(df)
+    drop_nan(df)
+    check_duplicates(df)
+    add_column(df)
 
 
 if __name__ == "__main__":
