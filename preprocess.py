@@ -27,6 +27,7 @@ def preprocess(df_name: str):
     drop_nan(df)
     check_duplicates(df)
     add_column(df)
+    return df
 
 
 if __name__ == "__main__":
