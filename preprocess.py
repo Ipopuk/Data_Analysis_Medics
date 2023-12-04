@@ -20,6 +20,7 @@ def fix_types(df):
         df[column] = df[column].apply(lambda x: float(x.replace(",", ".").replace("o", "0")) if type(x) != float else x)
 
 
+# Пункт 2
 def preprocess(df_name: str):
     df = pd.read_csv(df_name)
     df.columns = [x.lower().replace(" ", "_").replace(",", "") for x in df.columns]
