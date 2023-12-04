@@ -1,15 +1,15 @@
 import pandas as pd
 
 
-def add_column(df):
+def add_column(df: pd.DataFrame) -> None:
     df["аик+переливание_крови"] = df["аик"] * (df["объем_гемотрансфузии"].apply(lambda x: 1 if x > 0 else 0))
 
 
-def check_duplicates(df):
+def check_duplicates(df: pd.DataFrame) -> None:
     df.drop_duplicates()
 
 
-def drop_nan(df):
+def drop_nan(df: pd.DataFrame) -> None:
     df.dropna()
 
 
@@ -21,7 +21,7 @@ def fix_types(df):
 
 
 # Пункт 2
-def preprocess(df_name: str):
+def preprocess(df_name: str) -> pd.DataFrame:
     df = pd.read_csv(df_name)
     df.columns = [x.lower().replace(" ", "_").replace(",", "") for x in df.columns]
     fix_types(df)
