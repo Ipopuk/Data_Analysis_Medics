@@ -11,17 +11,30 @@ def analysis(df: pd.DataFrame) -> None:
 
 def dependence_time_fact(df: pd.DataFrame) -> None:
     # Подпункт 1
-    diabetes_mellitus_true = round(((sum(df.loc[:, "сахарный_диабет"]) / sum(df["развитие_опп"])) * 100), 4)
-    diabetes_mellitus_false = round(((sum(df.loc[:, "сахарный_диабет"]) / (len(df) - sum(df["развитие_опп"]))) * 100),
-                                    4)
-    hypertension_true = ""
-    hypertension_false = ""
-    chronic_kidney_disease_true = ""
-    chronic_kidney_disease_false = ""
+    diabetes_mellitus_true = round(((df.loc[df['развитие_опп'] == 1, 'сахарный_диабет']
+                                     .sum()) / (sum(df["развитие_опп"]))) * 100, 4)
+    diabetes_mellitus_false = round(((df.loc[df['развитие_опп'] == 0, 'сахарный_диабет']
+                                      .sum()) / (len(df['развитие_опп']) - sum(df["развитие_опп"]))) * 100, 4)
+
+    hypertension_true = round(((df.loc[df['развитие_опп'] == 1, 'гб']
+                                .sum()) / (sum(df["развитие_опп"]))) * 100, 4)
+    hypertension_false = round(((df.loc[df['развитие_опп'] == 0, 'гб']
+                                 .sum()) / (len(df['развитие_опп']) - sum(df["развитие_опп"]))) * 100, 4)
+
+    df["хбп_бин"] = df["хбп"].apply(lambda x: 1 if x == 1 or x == 2 else 0)
+    # chronic_kidney_disease_true = round(((df.loc[df['развитие_опп'] == 1, 'хбп_бин']
+    #                                       .sum()) / (sum(df["развитие_опп"]))) * 100, 4)
+    # chronic_kidney_disease_false = round(((df.loc[df['развитие_опп'] == 0, 'хбп_бин']
+    #                                        .sum()) / (len(df['развитие_опп']) - sum(df["развитие_опп"]))) * 100, 4)
 
     print(str(diabetes_mellitus_true) + "%", str(diabetes_mellitus_false) + "%")
-    # print(str(hypertension_true) + "%", str(hypertension_false) + "%")
-    # print(str(chronic_kidney_disease_true + "%"), str(chronic_kidney_disease_false) + "%")
+    print(str(hypertension_true) + "%", str(hypertension_false) + "%")
+    # wrong
+    # print(str(chronic_kidney_disease_true) + "%", str(chronic_kidney_disease_false) + "%")
+    # print((df.loc[df['развитие_опп'] == 1, 'хбп_бин'].sum()))
+
+    pd.set_option('display.max_rows', None)
+    # print(df["хбп_бин"].to_string(index=False))
     # Подпункт 3
     print(df[["инфаркт_миокарда", "длительность_операции"]].corr())
 
