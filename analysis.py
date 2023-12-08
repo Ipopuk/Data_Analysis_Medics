@@ -35,6 +35,14 @@ def dependence_time_fact(df: pd.DataFrame) -> None:
 
     pd.set_option('display.max_rows', None)
     # print(df["хбп_бин"].to_string(index=False))
+    # Подпункт 2
+    df["имт_ном"] = df["имт"].apply(lambda x: "выраженный_дефицит_массы_тела" if x < 16
+                                    else "недостаточная_масса_тела" if 16 <= x < 18.5
+                                    else "норма" if 18.5 <= x < 25
+                                    else "избыточная_масса_тела" if 25 <= x < 30
+                                    else "ожирение_1_степени" if 30 <= x < 35
+                                    else "ожирение_2_степени" if 35 <= x < 40
+                                    else "ожирение_3_степени")
     # Подпункт 3
     print(df[["инфаркт_миокарда", "длительность_операции"]].corr())
 
