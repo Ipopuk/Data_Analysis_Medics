@@ -1,17 +1,21 @@
 import pandas as pd
+import regression
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import scipy.stats as stats
 from preprocess import preprocess
+from scipy.stats import *
 
 
 # Пункт 3
 def analysis(df: pd.DataFrame) -> None:
     check_diagnosis(df)
-    #dependence_time_fact(df)
-    #imt_hol(df)
-    #poch_paren(df)
+    dependence_time_fact(df)
+    check_correlations(df)
+    dependence_time_fact(df)
+    imt_hol(df)
+    poch_paren(df)
 
 
 def chronic_diseases(df: pd.DataFrame) -> None:
@@ -68,7 +72,7 @@ def imt_hol(df: pd.DataFrame) -> None:
     df["ктг_холестерин"] = df["холестерин"].apply(lambda x: 1 if x > 7.8 else 0)
     imt_hol = pd.crosstab(df['ктг_имт'], df['ктг_холестерин'])
     print(imt_hol)
-    print(stats.chi2_contingency(pd.crosstab(df['ктг_имт'], df['ктг_холестерин'])))
+    print(chi2_contingency(pd.crosstab(df['ктг_имт'], df['ктг_холестерин'])))
     sns.heatmap(imt_hol, cmap="YlGnBu", annot=True, cbar=False);
     plt.show()
     # нет
@@ -109,6 +113,29 @@ def check_diagnosis(df: pd.DataFrame) -> list:  # ?
                 f"У пациента {idx} диагноз {num_to_words[row['хбп']]}, но должен быть {get_diagnosis(row['скф_расч.'])}")
             wrong_diagnosis.append(idx)
     return wrong_diagnosis
+
+
+def is_categorical(df: pd.DataFrame, column: str) -> bool:
+    return len(df[column].unique()) < len(df) * 0.05
+
+
+def check_correlations(df: pd.DataFrame) -> list:
+    columns = ["возраст", "сахарный_диабет", "гб", "хбп", "сад", "дад", "чсс", "рн", "фракция_изгнания", "холестерин",
+               "креатинин_крови", "мочевина", "скф_расч.", "калий", "имт", "толщина_паренхимы_почек"]
+    res = []
+    for x in columns:
+        if is_categorical(df, x):
+            temp = chi2_contingency(pd.crosstab(df[x], df["развитие_опп"]))
+            res.append([x, "развитие_опп", round(temp[0], 2), round(temp[1], 4), "Хи-квадрат"])
+        else:
+            if shapiro(df[x])[1] > 0.05:
+                temp = ttest_ind(df[x], df["развитие_опп"])
+                res.append([x, "развитие_опп", round(temp[0], 2), round(temp[1], 4), "T-критерий Стьюента"])
+            else:
+                temp = mannwhitneyu(df[x], df["развитие_опп"])
+                res.append([x, "развитие_опп", round(temp[0], 2), round(temp[1], 4), "U-критерий Манна-Уитни"])
+    print(*res, sep="\n")
+    return res
 
 
 if __name__ == "__main__":

@@ -13,7 +13,7 @@ def drop_nan(df: pd.DataFrame) -> None:
     df.dropna(inplace=True)
 
 
-def fix_types(df):
+def fix_types(df: pd.DataFrame) -> None:
     df["развитие_опп"] = df["развитие_опп"].apply(lambda x: 0 if x == "нет" else 1)
     df["хбп"] = df["хбп"].apply(lambda x: 0 if x == "Пациенты без ХБП" else 1 if x == "Стадия C1-C2" else 2)
     for column in df.select_dtypes(include=["object"]).columns:
@@ -24,6 +24,7 @@ def fix_types(df):
 def preprocess(df_name: str) -> pd.DataFrame:
     df = pd.read_csv(df_name)
     df.columns = [x.lower().replace(" ", "_").replace(",", "") for x in df.columns]
+    df.columns = [x[:-1] if x[-1] == "_" else x for x in df.columns]
     fix_types(df)
     drop_nan(df)
     check_duplicates(df)
