@@ -6,11 +6,11 @@ def add_column(df: pd.DataFrame) -> None:
 
 
 def check_duplicates(df: pd.DataFrame) -> None:
-    df.drop_duplicates()
+    df.drop_duplicates(inplace=True)
 
 
 def drop_nan(df: pd.DataFrame) -> None:
-    df.dropna()
+    df.dropna(inplace=True)
 
 
 def fix_types(df):

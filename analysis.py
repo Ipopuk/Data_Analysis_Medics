@@ -1,13 +1,17 @@
 import pandas as pd
-
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import scipy.stats as stats
 from preprocess import preprocess
 
 
 # Пункт 3
 def analysis(df: pd.DataFrame) -> None:
     check_diagnosis(df)
-    dependence_time_fact(df)
-    check_diagnosis(df)
+    #dependence_time_fact(df)
+    #imt_hol(df)
+    #poch_paren(df)
 
 
 def chronic_diseases(df: pd.DataFrame) -> None:
@@ -47,8 +51,35 @@ def chronic_diseases(df: pd.DataFrame) -> None:
 
 
 def dependence_time_fact(df: pd.DataFrame) -> None:
-    # Подпункт 3
-    print(df[["инфаркт_миокарда", "длительность_операции"]].corr())
+    print(stats.pointbiserialr(df["инфаркт_миокарда"], df["длительность_операции"]))
+    infarct_0 = df[df["инфаркт_миокарда"] == 0]
+    infarct_1 = df[df["инфаркт_миокарда"] == 1]
+    fig, axes = plt.subplots(1, 2, figsize=(9, 3))
+    plot = sns.boxplot(ax=axes[0], data=infarct_0, y="длительность_операции")
+    plot2 = sns.boxplot(ax=axes[1], data=infarct_1, y="длительность_операции")
+    plt.show()
+    # нет
+
+
+def imt_hol(df: pd.DataFrame) -> None:
+    # !!! норма - 18,5-25 избыточный - 25-30, больше - ожирение
+    # норма 3,6-7,8 ммоль и моль!!!
+    df["ктг_имт"] = df["имт"].apply(lambda x: 1 if x > 25 else 0)
+    df["ктг_холестерин"] = df["холестерин"].apply(lambda x: 1 if x > 7.8 else 0)
+    imt_hol = pd.crosstab(df['ктг_имт'], df['ктг_холестерин'])
+    print(imt_hol)
+    print(stats.chi2_contingency(pd.crosstab(df['ктг_имт'], df['ктг_холестерин'])))
+    sns.heatmap(imt_hol, cmap="YlGnBu", annot=True, cbar=False);
+    plt.show()
+    # нет
+
+
+def poch_paren(df: pd.DataFrame) -> None:
+    poch_paren = df[df["хбп"] == 0]
+    print(stats.pearsonr(poch_paren["толщина_паренхимы_почек"], poch_paren["возраст"]))
+    sns.scatterplot(data=poch_paren, x="толщина_паренхимы_почек", y="возраст")
+    plt.show()
+    # нет
 
 
 def get_diagnosis(m: int) -> str:
