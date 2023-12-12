@@ -7,9 +7,7 @@ from preprocess import preprocess
 def analysis(df: pd.DataFrame) -> None:
     dependence_time_fact(df)
     check_diagnosis(df)
-
-
-def dependence_time_fact(df: pd.DataFrame) -> None:
+def chronic_diseases(df: pd.DataFrame) -> None:
     # Подпункт 1
     diabetes_mellitus_true = round(((df.loc[df['развитие_опп'] == 1, 'сахарный_диабет']
                                      .sum()) / (sum(df["развитие_опп"]))) * 100, 4)
@@ -43,6 +41,9 @@ def dependence_time_fact(df: pd.DataFrame) -> None:
                                     else "ожирение_1_степени" if 30 <= x < 35
                                     else "ожирение_2_степени" if 35 <= x < 40
                                     else "ожирение_3_степени")
+
+def dependence_time_fact(df: pd.DataFrame) -> None:
+
     # Подпункт 3
     print(df[["инфаркт_миокарда", "длительность_операции"]].corr())
 
