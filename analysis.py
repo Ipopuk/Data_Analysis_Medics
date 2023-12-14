@@ -10,6 +10,7 @@ from scipy.stats import *
 
 # Пункт 3
 def analysis(df: pd.DataFrame) -> None:
+    chronic_diseases(df)
     check_diagnosis(df)
     dependence_time_fact(df)
     check_correlations(df)
@@ -31,27 +32,25 @@ def chronic_diseases(df: pd.DataFrame) -> None:
                                  .sum()) / (len(df['развитие_опп']) - sum(df["развитие_опп"]))) * 100, 4)
 
     df["хбп_бин"] = df["хбп"].apply(lambda x: 1 if x == 1 or x == 2 else 0)
-    # chronic_kidney_disease_true = round(((df.loc[df['развитие_опп'] == 1, 'хбп_бин']
-    #                                       .sum()) / (sum(df["развитие_опп"]))) * 100, 4)
-    # chronic_kidney_disease_false = round(((df.loc[df['развитие_опп'] == 0, 'хбп_бин']
-    #                                        .sum()) / (len(df['развитие_опп']) - sum(df["развитие_опп"]))) * 100, 4)
+    chronic_kidney_disease_true = round(((df.loc[df['хбп_бин'] == 1, 'развитие_опп']
+                                          .sum()) / (sum(df["развитие_опп"]))) * 100, 4)
+    chronic_kidney_disease_false = round(((df.loc[df['развитие_опп'] == 0, 'хбп_бин']
+                                           .sum()) / (len(df['развитие_опп']) - sum(df["развитие_опп"]))) * 100, 4)
 
     print(str(diabetes_mellitus_true) + "%", str(diabetes_mellitus_false) + "%")
     print(str(hypertension_true) + "%", str(hypertension_false) + "%")
-    # wrong
-    # print(str(chronic_kidney_disease_true) + "%", str(chronic_kidney_disease_false) + "%")
-    # print((df.loc[df['развитие_опп'] == 1, 'хбп_бин'].sum()))
-
-    pd.set_option('display.max_rows', None)
+    print(str(chronic_kidney_disease_true) + "%", str(chronic_kidney_disease_false) + "%")
+    # pd.set_option('display.max_rows', None)
     # print(df["хбп_бин"].to_string(index=False))
+    # print(len(df["хбп"]))
     # Подпункт 2
     df["имт_ном"] = df["имт"].apply(lambda x: "выраженный_дефицит_массы_тела" if x < 16
-    else "недостаточная_масса_тела" if 16 <= x < 18.5
-    else "норма" if 18.5 <= x < 25
-    else "избыточная_масса_тела" if 25 <= x < 30
-    else "ожирение_1_степени" if 30 <= x < 35
-    else "ожирение_2_степени" if 35 <= x < 40
-    else "ожирение_3_степени")
+                                    else "недостаточная_масса_тела" if 16 <= x < 18.5
+                                    else "норма" if 18.5 <= x < 25
+                                    else "избыточная_масса_тела" if 25 <= x < 30
+                                    else "ожирение_1_степени" if 30 <= x < 35
+                                    else "ожирение_2_степени" if 35 <= x < 40
+                                    else "ожирение_3_степени")
 
 
 def dependence_time_fact(df: pd.DataFrame) -> None:
