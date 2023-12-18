@@ -11,12 +11,13 @@ from scipy.stats import *
 # Пункт 3
 def analysis(df: pd.DataFrame) -> None:
     chronic_diseases(df)
-    check_diagnosis(df)
-    dependence_time_fact(df)
-    check_correlations(df)
-    dependence_time_fact(df)
-    imt_hol(df)
-    poch_paren(df)
+    imt(df)
+    # check_diagnosis(df)
+    # dependence_time_fact(df)
+    # check_correlations(df)
+    # dependence_time_fact(df)
+    # imt_hol(df)
+    # poch_paren(df)
 
 
 def chronic_diseases(df: pd.DataFrame) -> None:
@@ -43,14 +44,54 @@ def chronic_diseases(df: pd.DataFrame) -> None:
     # pd.set_option('display.max_rows', None)
     # print(df["хбп_бин"].to_string(index=False))
     # print(len(df["хбп"]))
+
+
+def imt(df):
     # Подпункт 2
     df["имт_ном"] = df["имт"].apply(lambda x: "выраженный_дефицит_массы_тела" if x < 16
-                                    else "недостаточная_масса_тела" if 16 <= x < 18.5
-                                    else "норма" if 18.5 <= x < 25
-                                    else "избыточная_масса_тела" if 25 <= x < 30
-                                    else "ожирение_1_степени" if 30 <= x < 35
-                                    else "ожирение_2_степени" if 35 <= x < 40
-                                    else "ожирение_3_степени")
+    else "недостаточная_масса_тела" if 16 <= x < 18.5
+    else "норма" if 18.5 <= x < 25
+    else "избыточная_масса_тела" if 25 <= x < 30
+    else "ожирение_1_степени" if 30 <= x < 35
+    else "ожирение_2_степени" if 35 <= x < 40
+    else "ожирение_3_степени")
+    # Показатели, которых хоть как-то связаны с сердцем:
+    s = '''
+    1. ГБ, сахарный диабет
+    2. Стенокардия
+    3. Инфаркт миокарда, Желудочковая экстрасистолия, Мерцательная аритмия, ХСН, НК
+    Разброс: [20, 42]
+    Сердце -- почки
+    '''
+    labels = ["ГБ", "Стенокардия", "Инфаркт миокарда", "Желудочковая экстрасистолия", "Мерцательная аритмия",
+              "ХСН", "НК"]
+    sizes_norma = count_disease(df, "норма")
+    sizes_overweight = count_disease(df, "избыточная_масса_тела")
+    sizes_one = count_disease(df, "ожирение_1_степени")
+    sizes_two = count_disease(df, "ожирение_2_степени")
+    sizes_three = count_disease(df, "ожирение_3_степени")
+
+    print(sizes_norma)
+    print(sizes_overweight)
+    print(sizes_one)
+    print(sizes_two)
+    print(sizes_three)
+
+    # print(min(df["имт"]), max(df["имт"]))
+
+    # print(sum(df["развитие_опп"] == 1))
+
+    # sns.scatterplot(data=df, x="имт_ном", y="возраст")
+    # plt.show()
+
+
+def count_disease(df: pd.DataFrame, imt: str) -> list:
+    lst = ["гб", "стенокардия", "инфаркт_миокарда", "желудочковая_экстрасистолия",
+           "мерцательная_аритмия", "хсн", "нк"]
+    answer = []
+    for i in range(len(lst)):
+        answer.append(df.loc[(df['имт_ном'] == imt) & (df[lst[i]] == 1), 'развитие_опп'].sum())
+    return answer
 
 
 def dependence_time_fact(df: pd.DataFrame) -> None:
