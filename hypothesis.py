@@ -9,7 +9,7 @@ from preprocess import preprocess
 """
 
 
-def isnormal(df, col_2):
+def is_normal(df, col_2):
     if shapiro(df[col_2])[1] >= 0.05:
         print(ttest_ind(df['развитие_опп'], df[col_2]))
 

@@ -1,23 +1,20 @@
 import pandas as pd
-import regression
-import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-import scipy.stats as stats
 from preprocess import preprocess
 from scipy.stats import *
 
 
 # Пункт 3
 def analysis(df: pd.DataFrame) -> None:
-    chronic_diseases(df)
-    imt(df)
+    #chronic_diseases(df)
+    #imt(df)
     # check_diagnosis(df)
     # dependence_time_fact(df)
     # check_correlations(df)
-    # dependence_time_fact(df)
-    # imt_hol(df)
-    # poch_paren(df)
+    dependence_time_fact(df)
+    imt_hol(df)
+    poch_paren(df)
 
 
 def chronic_diseases(df: pd.DataFrame) -> None:
@@ -118,7 +115,7 @@ def count_disease(df: pd.DataFrame, imt: str) -> list:
 
 
 def dependence_time_fact(df: pd.DataFrame) -> None:
-    print(stats.pointbiserialr(df["инфаркт_миокарда"], df["длительность_операции"]))
+    print(pointbiserialr(df["инфаркт_миокарда"], df["длительность_операции"]))
     infarct_0 = df[df["инфаркт_миокарда"] == 0]
     infarct_1 = df[df["инфаркт_миокарда"] == 1]
     fig, axes = plt.subplots(1, 2, figsize=(9, 3))
@@ -143,7 +140,7 @@ def imt_hol(df: pd.DataFrame) -> None:
 
 def poch_paren(df: pd.DataFrame) -> None:
     poch_paren = df[df["хбп"] == 0]
-    print(stats.pearsonr(poch_paren["толщина_паренхимы_почек"], poch_paren["возраст"]))
+    print(pearsonr(poch_paren["толщина_паренхимы_почек"], poch_paren["возраст"]))
     sns.scatterplot(data=poch_paren, x="толщина_паренхимы_почек", y="возраст")
     plt.show()
     # нет
