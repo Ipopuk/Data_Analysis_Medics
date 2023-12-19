@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 
 
@@ -20,6 +21,20 @@ def fix_types(df: pd.DataFrame) -> None:
         df[column] = df[column].apply(lambda x: float(x.replace(",", ".").replace("o", "0")) if type(x) != float else x)
 
 
+def drop_outliers(df: pd.DataFrame, a=3) -> tuple:
+    columns = df.columns
+    outliers_all = np.array([False for i in range(len(df))])
+    for column in columns:
+        if len(df[column].unique()) > len(df) * 0.05:
+            std = df[column].std()
+            median = df[column].median()
+            outliers = abs(df[[column]] - median) > a * std
+            outliers_all = np.bitwise_or(outliers.to_numpy().flatten(), outliers_all)
+    df_unchanged = df.copy()
+    df = df[~ outliers_all].dropna()
+    return df, df_unchanged, outliers_all
+
+
 # Пункт 2
 def preprocess(df_name: str) -> pd.DataFrame:
     df = pd.read_csv(df_name)
@@ -28,6 +43,7 @@ def preprocess(df_name: str) -> pd.DataFrame:
     fix_types(df)
     drop_nan(df)
     check_duplicates(df)
+    df, unchanged_df, outliers = drop_outliers(df)
     add_column(df)
     return df
 
