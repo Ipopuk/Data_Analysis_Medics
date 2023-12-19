@@ -46,15 +46,41 @@ def chronic_diseases(df: pd.DataFrame) -> None:
     # print(len(df["хбп"]))
 
 
+def draw_chart(labels, sizes, name):
+    colors = ['#506D2F', '#2a2922', '#f3ebdd', '#7d5642', "#626D71", "#cdcdc0", "#DDBC95"]
+    # Plot
+    fig, ax = plt.subplots(figsize=(10, 6), subplot_kw=dict(aspect="equal"))
+
+    wedges, texts = ax.pie(sizes, startangle=-40, colors=colors)
+
+    # Inner circle
+    centre_circle = plt.Circle((0, 0), 0.70, fc='white')
+    fig = plt.gcf()
+    fig.gca().add_artist(centre_circle)
+
+    # Add labels
+    ax.legend(wedges, labels,
+              title="болезни",
+              loc="center left",
+              bbox_to_anchor=(1, 0, 0.5, 1))
+
+    plt.setp(texts, size=12, weight="bold")
+    plt.pie(sizes, labels=labels, colors=colors,
+            autopct='%1.1f%%')
+    ax.set_title(name)
+
+    plt.show()
+
+
 def imt(df):
     # Подпункт 2
     df["имт_ном"] = df["имт"].apply(lambda x: "выраженный_дефицит_массы_тела" if x < 16
-                                    else "недостаточная_масса_тела" if 16 <= x < 18.5
-                                    else "норма" if 18.5 <= x < 25
-                                    else "избыточная_масса_тела" if 25 <= x < 30
-                                    else "ожирение_1_степени" if 30 <= x < 35
-                                    else "ожирение_2_степени" if 35 <= x < 40
-                                    else "ожирение_3_степени")
+    else "недостаточная_масса_тела" if 16 <= x < 18.5
+    else "норма" if 18.5 <= x < 25
+    else "избыточная_масса_тела" if 25 <= x < 30
+    else "ожирение_1_степени" if 30 <= x < 35
+    else "ожирение_2_степени" if 35 <= x < 40
+    else "ожирение_3_степени")
     # Показатели, которых хоть как-то связаны с сердцем:
     s = '''
     1. ГБ, сахарный диабет
@@ -65,23 +91,19 @@ def imt(df):
     '''
     labels = ["ГБ", "Стенокардия", "Инфаркт миокарда", "Желудочковая экстрасистолия", "Мерцательная аритмия",
               "ХСН", "НК"]
-    sizes = [10, 9, 8, 1, 1, 10, 6]
     sizes_norma = count_disease(df, "норма")
     sizes_overweight = count_disease(df, "избыточная_масса_тела")
     sizes_one = count_disease(df, "ожирение_1_степени")
     sizes_two = count_disease(df, "ожирение_2_степени")
     sizes_three = count_disease(df, "ожирение_3_степени")
 
-    print(sizes_norma)
-    print(sizes_overweight)
-    print(sizes_one)
-    print(sizes_two)
-    print(sizes_three)
-
+    draw_chart(labels, sizes_norma, "норма")
+    draw_chart(labels, sizes_overweight, "избыточная_масса_тела")
+    draw_chart(labels, sizes_one, "ожирение_1_степени")
+    draw_chart(labels, sizes_two, "ожирение_2_степени")
+    draw_chart(labels, sizes_three, "ожирение_3_степени")
     # print(min(df["имт"]), max(df["имт"]))
-
     # print(sum(df["развитие_опп"] == 1))
-
     # sns.scatterplot(data=df, x="имт_ном", y="возраст")
     # plt.show()
 
